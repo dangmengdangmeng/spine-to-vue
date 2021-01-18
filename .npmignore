@@ -1,0 +1,14 @@
+.idea
+node_modules/
+dist/
+package-lock.json
+*.ts
+.DS_Store
+tsconfig.json
+docs/
+types/
+dtsconfig.json
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+.gitignore

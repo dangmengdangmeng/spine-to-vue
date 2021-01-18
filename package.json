@@ -1,0 +1,12 @@
+{
+  "name": "spine-to-vue",
+  "version": "0.0.4",
+  "description": "",
+  "main": "./src/main",
+  "author": "dm",
+  "license": "ISC",
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "uuid": "^3.3.3"
+  }
+}
