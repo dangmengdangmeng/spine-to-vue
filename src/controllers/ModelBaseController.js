@@ -78,8 +78,8 @@ class ModelBaseController {
     createCanvases(numCanvases) {
         for (let i = 0; i < numCanvases; i++) {
             const canvas = document.createElement("canvas")
-            canvas.width = 1
-            canvas.height = 1
+            canvas.style.width = "100%"
+            canvas.style.height = "100%"
             canvas.ctx = new spine.webgl.ManagedWebGLRenderingContext(canvas, {alpha: true})
             canvas.id = "canvas-" + i + uuid()
             this.spineDemos.canvases.push(canvas)

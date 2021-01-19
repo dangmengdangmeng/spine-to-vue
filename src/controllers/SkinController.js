@@ -11,8 +11,8 @@ class SkinController {
         this.timeKeeper = null
         this.DEMO_NAME = uuid()
         this.canvas = null
-        this.curSkin = '瘸腿'
-        this.curAction = 'idle'
+        this.curSkin = ''
+        this.curAction = ''
         this.skeleton = null
         this.files = []
         this.state = null
@@ -58,18 +58,22 @@ class SkinController {
         this.offset = new spine.Vector2()
         this.bounds = new spine.Vector2()
         this.skeleton.getBounds(this.offset, this.bounds, [])
-        this.getJsonInfo(this.files['json'])
+        if (this.loadCallback) {
+            this.loadCallback()
+        }
     }
 
     //获取json中的皮肤和动画
     getJsonInfo(url) {
-        ModelService.getJsonInfo(url).then(response => {
-            const {skins, animations} = response
-            this.skins = this.filterSkins(skins)
-            this.animations = this.filterAnimations(animations)
-            if (this.loadCallback) {
-                this.loadCallback()
-            }
+        return new Promise(resolve => {
+            ModelService.getJsonInfo(url).then(response => {
+                const {skins, animations} = response
+                this.skins = this.filterSkins(skins)
+                this.curSkin = this.skins[0] || ''
+                this.animations = this.filterAnimations(animations)
+                this.curAction = this.animations[0] || ''
+                resolve()
+            })
         })
     }
 

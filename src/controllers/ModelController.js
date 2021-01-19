@@ -18,7 +18,9 @@ class ModelController extends ModelBaseController {
             this.isInit = true
             this.skinController.files = config.files
             this.skinController.loadCallback = () => resolve()
-            super.initParams(this.skinController, canvas)
+            this.skinController.getJsonInfo(config.files['json']).then(() => {
+                super.initParams(this.skinController, canvas)
+            })
         })
     }
 
