@@ -7,7 +7,7 @@ class ModelBaseController {
             HOVER_COLOR_OUTER: new spine.Color(1, 1, 1, 1),
             NON_HOVER_COLOR_INNER: new spine.Color(0.478, 0, 0, 0.5),
             NON_HOVER_COLOR_OUTER: new spine.Color(1, 0, 0, 0.8),
-            assetManager: new spine.SharedAssetManager('http://sandbox-iyuyi-public-new.oss-cn-beijing.aliyuncs.com/files/spine'),
+            assetManager: new spine.SharedAssetManager(''),
             demos: [],
             loopRunning: false,
             canvases: []

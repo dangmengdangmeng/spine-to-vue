@@ -1,6 +1,6 @@
 {
   "name": "spine-to-vue",
-  "version": "0.0.4",
+  "version": "0.0.7",
   "description": "",
   "main": "./src/main",
   "author": "dm",
@@ -8,5 +8,8 @@
   "devDependencies": {
     "rimraf": "^3.0.2",
     "uuid": "^3.3.3"
+  },
+  "dependencies": {
+    "axios": "^0.21.1"
   }
 }
