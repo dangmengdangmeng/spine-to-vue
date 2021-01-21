@@ -1,43 +1,41 @@
 import ModelBaseController from "./ModelBaseController"
 import SkinController from "./SkinController"
-import ModelService from "spine-to-vue/src/services/model/ModelService"
+import GlobalData from "../Global"
 
-class ModelController extends ModelBaseController {
+class ModelController {
 
     constructor() {
-        super()
         this.isInit = false
-        this.skinController = new SkinController()
-        this.skins = []
-        this.animations = []
+        GlobalData.demo = new SkinController()
+        this.modelBaseController = new ModelBaseController()
     }
 
     load(canvas, config = {}) {
         return new Promise(resolve => {
             if (this.isInit) resolve()
             this.isInit = true
-            this.skinController.files = config.files
-            this.skinController.loadCallback = () => resolve()
-            this.skinController.getJsonInfo(config.files['json']).then(() => {
-                super.initParams(this.skinController, canvas)
+            GlobalData.demo.files = config.files
+            GlobalData.demo.loadCallback = () => resolve()
+            GlobalData.demo.getJsonInfo(config.files['json']).then(() => {
+                this.modelBaseController.initParams(canvas)
             })
         })
     }
 
     getSkins() {
-        return this.skinController.skins
+        return GlobalData.demo.skins
     }
 
     getAnimations() {
-        return this.skinController.animations
+        return GlobalData.demo.animations
     }
 
     changeSkin(name) {
-        this.skinController.changeSkin(name)
+        GlobalData.demo.changeSkin(name)
     }
 
     changeAction(name, isLoop = false, delay = 0) {
-        this.skinController.changeAction(name, isLoop, delay)
+        GlobalData.demo.changeAction(name, isLoop, delay)
     }
 }
 

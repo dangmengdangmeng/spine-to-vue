@@ -1,5 +1,5 @@
 import * as uuid from 'uuid/v4'
-import ModelService from "spine-to-vue/src/services/model/ModelService"
+import ModelService from "../services/model/ModelService"
 
 class SkinController {
     constructor() {
@@ -10,7 +10,6 @@ class SkinController {
         this.bounds = null
         this.timeKeeper = null
         this.DEMO_NAME = uuid()
-        this.canvas = null
         this.curSkin = ''
         this.curAction = ''
         this.skeleton = null
@@ -20,19 +19,14 @@ class SkinController {
         this.loadCallback = null
     }
 
-    load(canvas, spineDemos) {
-        this.canvas = canvas
-        this.spineDemos = spineDemos
-        this.init()
-    }
-
-    init() {
-        this.gl = this.canvas.ctx.gl
-        this.renderer = new spine.webgl.SceneRenderer(this.canvas, this.gl)
+    load(canvas, assetManager) {
+        console.log(canvas, assetManager)
+        this.assetManager = assetManager
+        this.gl = canvas.ctx.gl
+        this.renderer = new spine.webgl.SceneRenderer(canvas, this.gl)
         let textureLoader = (img) => {
             return new spine.webgl.GLTexture(this.gl, img)
         }
-        this.assetManager = this.spineDemos.assetManager
         this.files.images.map(item => {
             this.assetManager.loadTexture(this.DEMO_NAME, textureLoader, item.url)
         })
