@@ -1,41 +1,42 @@
 import ModelBaseController from "./ModelBaseController"
 import SkinController from "./SkinController"
-import GlobalData from "../Global"
 
-class ModelController {
+class ModelController extends ModelBaseController {
 
     constructor() {
+        super()
         this.isInit = false
-        GlobalData.demo = new SkinController()
-        this.modelBaseController = new ModelBaseController()
+        this.skinController = new SkinController()
+        this.skins = []
+        this.animations = []
     }
 
     load(canvas, config = {}) {
         return new Promise(resolve => {
             if (this.isInit) resolve()
             this.isInit = true
-            GlobalData.demo.files = config.files
-            GlobalData.demo.loadCallback = () => resolve()
-            GlobalData.demo.getJsonInfo(config.files['json']).then(() => {
-                this.modelBaseController.initParams(canvas)
+            this.skinController.files = config.files
+            this.skinController.loadCallback = () => resolve()
+            this.skinController.getJsonInfo(config.files['json']).then(() => {
+                super.initParams(this.skinController, canvas)
             })
         })
     }
 
     getSkins() {
-        return GlobalData.demo.skins
+        return this.skinController.skins
     }
 
     getAnimations() {
-        return GlobalData.demo.animations
+        return this.skinController.animations
     }
 
     changeSkin(name) {
-        GlobalData.demo.changeSkin(name)
+        this.skinController.changeSkin(name)
     }
 
     changeAction(name, isLoop = false, delay = 0) {
-        GlobalData.demo.changeAction(name, isLoop, delay)
+        this.skinController.changeAction(name, isLoop, delay)
     }
 }
 
