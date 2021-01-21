@@ -1,6 +1,5 @@
 import ModelBaseController from "./ModelBaseController"
 import SkinController from "./SkinController"
-import ModelService from "spine-to-vue/src/services/model/ModelService"
 
 class ModelController extends ModelBaseController {
 

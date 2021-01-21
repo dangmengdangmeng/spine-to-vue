@@ -1,5 +1,5 @@
 import * as uuid from 'uuid/v4'
-import ModelService from "spine-to-vue/src/services/model/ModelService"
+import ModelService from "../services/model/ModelService"
 
 class SkinController {
     constructor() {
