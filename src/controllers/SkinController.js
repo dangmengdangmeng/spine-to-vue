@@ -1,16 +1,13 @@
-import * as uuid from 'uuid/v4'
 import ModelService from "../services/model/ModelService"
 
 class SkinController {
     constructor() {
         this.gl = null
         this.renderer = null
-        this.assetManager = null
         this.offset = null
         this.bounds = null
         this.timeKeeper = null
-        this.DEMO_NAME = uuid()
-        this.canvas = null
+        this.DEMO_NAME = null
         this.curSkin = ''
         this.curAction = ''
         this.skeleton = null
@@ -20,34 +17,27 @@ class SkinController {
         this.loadCallback = null
     }
 
-    load(canvas, spineDemos) {
-        this.canvas = canvas
-        this.spineDemos = spineDemos
-        this.init()
-    }
-
-    init() {
-        this.gl = this.canvas.ctx.gl
-        this.renderer = new spine.webgl.SceneRenderer(this.canvas, this.gl)
+    load(canvas, assetManager) {
+        this.gl = canvas.ctx.gl
+        this.renderer = new spine.webgl.SceneRenderer(canvas, this.gl)
         let textureLoader = (img) => {
             return new spine.webgl.GLTexture(this.gl, img)
         }
-        this.assetManager = this.spineDemos.assetManager
         this.files.images.map(item => {
-            this.assetManager.loadTexture(this.DEMO_NAME, textureLoader, item.url)
+            assetManager.loadTexture(this.DEMO_NAME, textureLoader, item.url)
         })
-        this.assetManager.loadText(this.DEMO_NAME, this.files['atlas'])
-        this.assetManager.loadJson(this.DEMO_NAME, this.files['json'])
+        assetManager.loadText(this.DEMO_NAME, this.files['atlas'])
+        assetManager.loadJson(this.DEMO_NAME, this.files['json'])
         this.timeKeeper = new spine.TimeKeeper()
     }
 
-    loadingComplete() {
-        const atlas = new spine.TextureAtlas(this.assetManager.get(this.DEMO_NAME, this.files['atlas']), (path) => {
-            return this.assetManager.get(this.DEMO_NAME, this.getFilePath(path))
+    loadingComplete(assetManager) {
+        const atlas = new spine.TextureAtlas(assetManager.get(this.DEMO_NAME, this.files['atlas']), (path) => {
+            return assetManager.get(this.DEMO_NAME, this.getFilePath(path))
         })
         const atlasLoader = new spine.AtlasAttachmentLoader(atlas)
         const skeletonJson = new spine.SkeletonJson(atlasLoader)
-        const skeletonData = skeletonJson.readSkeletonData(this.assetManager.get(this.DEMO_NAME, this.files['json']))
+        const skeletonData = skeletonJson.readSkeletonData(assetManager.get(this.DEMO_NAME, this.files['json']))
         this.skeleton = new spine.Skeleton(skeletonData)
         this.skeleton.setSkinByName(this.curSkin)
         const stateData = new spine.AnimationStateData(this.skeleton.data)
@@ -128,10 +118,10 @@ class SkinController {
         }
     }
 
-    changeAction(name, isLoop, delay = 0) {
+    changeAction(name, isLoop = false) {
         this.curAction = name
         if (this.state) {
-            this.state.setAnimation(0, this.curAction, isLoop, delay)
+            this.state.setAnimation(0, this.curAction, isLoop)
         }
     }
 

@@ -1,25 +1,33 @@
 import ModelBaseController from "./ModelBaseController"
-import SkinController from "./SkinController"
-import ModelService from "../services/model/ModelService";
+import ModelService from "../services/model/ModelService"
+import GlobalData from "spine-to-vue/src/Global"
+import SkinController from "spine-to-vue/src/controllers/SkinController"
+import * as uuid from 'uuid/v4'
 
-class ModelController extends ModelBaseController {
+class ModelController {
     constructor() {
-        super();
-        this.skinController = new SkinController()
+        this.isInit = false
+        this.randomId = uuid() + '_' + new Date().valueOf()
     }
 
     load(canvas, config = {}) {
-        return new Promise(resolve => {
-            this.skinController.files = config.files
-            this.skinController.loadCallback = () => resolve()
-            this.skinController.getJsonInfo(config.files['json']).then(() => {
-                super.initParams(this.skinController, canvas)
+        return new Promise((resolve, reject) => {
+            if (this.isInit) reject()
+            this.isInit = true
+            const modelBaseController = new ModelBaseController()
+            modelBaseController.modelId = this.randomId
+            GlobalData.models[this.randomId] = new SkinController()
+            GlobalData.models[this.randomId].DEMO_NAME = this.randomId
+            GlobalData.models[this.randomId].files = config.files
+            GlobalData.models[this.randomId].loadCallback = () => resolve()
+            GlobalData.models[this.randomId].getJsonInfo(config.files['json']).then(() => {
+                modelBaseController.initParams(canvas)
             })
         })
     }
 
     getSkins() {
-        return this.skinController.skins
+        return GlobalData.models[this.randomId].skins
     }
 
     fileToAnimation(json) {
@@ -40,15 +48,15 @@ class ModelController extends ModelBaseController {
     }
 
     getAnimations() {
-        return this.skinController.animations
+        return GlobalData.models[this.randomId].animations
     }
 
     changeSkin(name) {
-        this.skinController.changeSkin(name)
+        GlobalData.models[this.randomId].changeSkin(name)
     }
 
-    changeAction(name, isLoop = false, delay = 0) {
-        this.skinController.changeAction(name, isLoop, delay)
+    changeAction(name, isLoop = false) {
+        GlobalData.models[this.randomId].changeAction(name, isLoop)
     }
 }
 
