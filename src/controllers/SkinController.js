@@ -59,9 +59,9 @@ class SkinController {
             ModelService.getJsonInfo(url).then(response => {
                 const {skins, animations} = response
                 this.skins = this.filterSkins(skins)
-                this.curSkin = this.skins[0] || ''
+                this.curSkin = this.curSkin || this.skins[0] || ''
                 this.animations = this.filterAnimations(animations)
-                this.curAction = this.animations[0] || ''
+                this.curAction = this.curAction || this.animations[0] || ''
                 resolve()
             })
         })

@@ -1,13 +1,14 @@
 import ModelBaseController from "./ModelBaseController"
 import ModelService from "../services/model/ModelService"
-import GlobalData from "spine-to-vue/src/Global"
-import SkinController from "spine-to-vue/src/controllers/SkinController"
+import GlobalData from "../Global"
+import SkinController from "./SkinController"
 import * as uuid from 'uuid/v4'
 
 class ModelController {
     constructor() {
         this.isInit = false
         this.randomId = uuid() + '_' + new Date().valueOf()
+        GlobalData.models[this.randomId] = new SkinController()
     }
 
     load(canvas, config = {}) {
@@ -16,7 +17,6 @@ class ModelController {
             this.isInit = true
             const modelBaseController = new ModelBaseController()
             modelBaseController.modelId = this.randomId
-            GlobalData.models[this.randomId] = new SkinController()
             GlobalData.models[this.randomId].DEMO_NAME = this.randomId
             GlobalData.models[this.randomId].files = config.files
             GlobalData.models[this.randomId].loadCallback = () => resolve()
