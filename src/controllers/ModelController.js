@@ -39,6 +39,23 @@ class ModelController {
         })
     }
 
+    fileToSkin(json) {
+        return new Promise(resolve => {
+            ModelService.getJsonInfo(json).then(response => {
+                const {skins} = response
+                resolve(this.filterSkins(skins))
+            })
+        })
+    }
+
+    filterSkins(skins) {
+        let items = []
+        skins.map(item => {
+            items.push(item.name)
+        })
+        return items
+    }
+
     filterAnimations(animations) {
         let items = []
         for (let key in animations) {
