@@ -8,8 +8,10 @@ class SkinController {
         this.bounds = null
         this.timeKeeper = null
         this.DEMO_NAME = null
-        this.curSkin = ''
-        this.curAction = ''
+        this.curSkin = ""
+        this.skins = []
+        this.curAction = ""
+        this.animations = []
         this.skeleton = null
         this.files = []
         this.state = null
@@ -23,26 +25,35 @@ class SkinController {
         let textureLoader = (img) => {
             return new spine.webgl.GLTexture(this.gl, img)
         }
-        this.files.images.map(item => {
+        this.files.images.map((item) => {
             assetManager.loadTexture(this.DEMO_NAME, textureLoader, item.url)
         })
-        assetManager.loadText(this.DEMO_NAME, this.files['atlas'])
-        assetManager.loadJson(this.DEMO_NAME, this.files['json'])
+        assetManager.loadText(this.DEMO_NAME, this.files["atlas"])
+        assetManager.loadJson(this.DEMO_NAME, this.files["json"])
         this.timeKeeper = new spine.TimeKeeper()
     }
 
     loadingComplete(assetManager) {
-        const atlas = new spine.TextureAtlas(assetManager.get(this.DEMO_NAME, this.files['atlas']), (path) => {
-            return assetManager.get(this.DEMO_NAME, this.getFilePath(path))
-        })
+        const atlas = new spine.TextureAtlas(
+            assetManager.get(this.DEMO_NAME, this.files["atlas"]),
+            (path) => {
+                return assetManager.get(this.DEMO_NAME, this.getFilePath(path))
+            }
+        )
         const atlasLoader = new spine.AtlasAttachmentLoader(atlas)
         const skeletonJson = new spine.SkeletonJson(atlasLoader)
-        const skeletonData = skeletonJson.readSkeletonData(assetManager.get(this.DEMO_NAME, this.files['json']))
+        const skeletonData = skeletonJson.readSkeletonData(
+            assetManager.get(this.DEMO_NAME, this.files["json"])
+        )
         this.skeleton = new spine.Skeleton(skeletonData)
-        this.skeleton.setSkinByName(this.curSkin)
+        if (this.skins.includes(this.curSkin)) {
+            this.skeleton.setSkinByName(this.curSkin)
+        }
         const stateData = new spine.AnimationStateData(this.skeleton.data)
         this.state = new spine.AnimationState(stateData)
-        this.changeAction(this.curAction, true)
+        if (this.animations.includes(this.curAction)) {
+            this.changeAction(this.curAction, true)
+        }
         this.state.apply(this.skeleton)
         this.skeleton.updateWorldTransform()
         this.offset = new spine.Vector2()
@@ -55,13 +66,13 @@ class SkinController {
 
     //获取json中的皮肤和动画
     getJsonInfo(url) {
-        return new Promise(resolve => {
-            ModelService.getJsonInfo(url).then(response => {
+        return new Promise((resolve) => {
+            ModelService.getJsonInfo(url).then((response) => {
                 const {skins, animations} = response
                 this.skins = this.filterSkins(skins)
-                this.curSkin = this.curSkin || this.skins[0] || ''
+                this.curSkin = this.curSkin || this.skins[0] || ""
                 this.animations = this.filterAnimations(animations)
-                this.curAction = this.curAction || this.animations[0] || ''
+                this.curAction = this.curAction || this.animations[0] || ""
                 resolve()
             })
         })
@@ -69,8 +80,8 @@ class SkinController {
 
     filterSkins(skins) {
         let items = []
-        skins.map(item => {
-            if (item && item.name && item.name !== 'default') {
+        skins.map((item) => {
+            if (item && item.name) {
                 items.push(item.name)
             }
         })
@@ -86,14 +97,14 @@ class SkinController {
     }
 
     getFilePath(name) {
-        return (this.files.images.find(item => item.name === name)).url
+        return this.files.images.find((item) => item.name === name).url
     }
 
     render() {
         this.timeKeeper.update()
         const {delta} = this.timeKeeper
 
-        this.renderer.camera.position.x = this.offset.x + this.bounds.x * 1.5 - 125
+        this.renderer.camera.position.x = this.offset.x + this.bounds.x / 2
         this.renderer.camera.position.y = this.offset.y + this.bounds.y / 2
         this.renderer.camera.viewportWidth = this.bounds.x * 3
         this.renderer.camera.viewportHeight = this.bounds.y * 1.2
@@ -112,7 +123,7 @@ class SkinController {
 
     changeSkin(name) {
         this.curSkin = name
-        if (this.skeleton) {
+        if (this.skeleton && this.skins.includes(this.curSkin)) {
             this.skeleton.setSkinByName(this.curSkin)
             this.skeleton.setSlotsToSetupPose()
         }
@@ -120,7 +131,7 @@ class SkinController {
 
     changeAction(name, isLoop = false) {
         this.curAction = name
-        if (this.state) {
+        if (this.state && this.animations.includes(this.curAction)) {
             this.state.setAnimation(0, this.curAction, isLoop)
         }
     }
@@ -128,7 +139,12 @@ class SkinController {
     swingSword(status) {
         if (status) {
             this.swordStatus = !this.swordStatus
-            this.state.setAnimation(5, this.swordStatus ? "meleeSwing2" : "meleeSwing1", false, 0)
+            this.state.setAnimation(
+                5,
+                this.swordStatus ? "meleeSwing2" : "meleeSwing1",
+                false,
+                0
+            )
         } else {
             this.state.setAnimation(5, "empty", false, 0)
         }
