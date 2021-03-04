@@ -5,78 +5,98 @@ import SkinController from "./SkinController";
 import * as uuid from "uuid/v4";
 
 class ModelController {
-  constructor() {
-    this.isInit = false;
-    this.randomId = uuid() + "_" + new Date().valueOf();
-    GlobalData.models[this.randomId] = new SkinController();
-  }
+	constructor() {
+		this.isInit = false;
+		this.randomId = uuid() + "_" + new Date().valueOf();
+		GlobalData.models[this.randomId] = new SkinController();
+	}
 
-  load(canvas, config = {}) {
-    return new Promise((resolve, reject) => {
-      if (this.isInit) reject();
-      this.isInit = true;
-      const modelBaseController = new ModelBaseController();
-      modelBaseController.modelId = this.randomId;
-      GlobalData.models[this.randomId].DEMO_NAME = this.randomId;
-      GlobalData.models[this.randomId].files = config.files;
-      GlobalData.models[this.randomId].loadCallback = () => resolve();
-      GlobalData.models[this.randomId]
-        .getJsonInfo(config.files["json"])
-        .then(() => {
-          modelBaseController.initParams(canvas);
-        });
-    });
-  }
+	load(canvas, config = {}) {
+		return new Promise((resolve, reject) => {
+			if (this.isInit) reject();
+			this.isInit = true;
+			const modelBaseController = new ModelBaseController();
+			modelBaseController.modelId = this.randomId;
+			GlobalData.models[this.randomId].DEMO_NAME = this.randomId;
+			GlobalData.models[this.randomId].files = config.files;
+			GlobalData.models[this.randomId].loadCallback = () => resolve();
+			modelBaseController.initParams(canvas);
+		});
+	}
 
-  getSkins() {
-    return GlobalData.models[this.randomId].skins;
-  }
+	getSkins() {
+		let items = GlobalData.models[this.randomId].skins.map(item => {
+			return item.name;
+		});
+		return items;
+	}
 
-  fileToAnimation(json) {
-    return new Promise((resolve) => {
-      ModelService.getJsonInfo(json).then((response) => {
-        const { animations } = response;
-        resolve(this.filterAnimations(animations));
-      });
-    });
-  }
+	fileToAnimation(json) {
+		return new Promise((resolve) => {
+			ModelService.getJsonInfo(json).then((response) => {
+				const {animations} = response;
+				let items = [];
+				for (let key in animations) {
+					items.push(key);
+				}
+				resolve(items);
+			});
+		});
+	}
 
-  fileToSkin(json) {
-    return new Promise((resolve) => {
-      ModelService.getJsonInfo(json).then((response) => {
-        const { skins } = response;
-        resolve(this.filterSkins(skins));
-      });
-    });
-  }
+	fileToSkin(json) {
+		return new Promise((resolve) => {
+			ModelService.getJsonInfo(json).then((response) => {
+				const {skins} = response;
+				let items = [];
+				skins.map((item) => {
+					items.push(item.name);
+				});
+				resolve(items);
+			});
+		});
+	}
 
-  filterSkins(skins) {
-    let items = [];
-    skins.map((item) => {
-      items.push(item.name);
-    });
-    return items;
-  }
+	getAnimations() {
+		return GlobalData.models[this.randomId].animations;
+	}
 
-  filterAnimations(animations) {
-    let items = [];
-    for (let key in animations) {
-      items.push(key);
-    }
-    return items;
-  }
+	changeSkin(name) {
+		GlobalData.models[this.randomId].changeSkin(name);
+	}
 
-  getAnimations() {
-    return GlobalData.models[this.randomId].animations;
-  }
+	changeAction(name, isLoop = false) {
+		GlobalData.models[this.randomId].changeAction(name, isLoop);
+	}
 
-  changeSkin(name) {
-    GlobalData.models[this.randomId].changeSkin(name);
-  }
+	//创建一个空的皮肤
+	createSkin(name) {
+		if (!name) throw new Error('name is undefined');
+		return new spine.Skin(name);
+	}
 
-  changeAction(name, isLoop = false) {
-    GlobalData.models[this.randomId].changeAction(name, isLoop);
-  }
+	//设置插槽内的内容
+	setAttachments(skin, slotIndex, attachments) {
+		for (var attachmentName in attachments) {
+			skin.setAttachment(slotIndex, attachmentName, attachments[attachmentName]);
+		}
+		return skin;
+	}
+
+	//根据名称获取相应皮肤
+	getSkin(name) {
+		return GlobalData.models[this.randomId].skins.find(item => item.name === name);
+	}
+
+	//设置自定义皮肤到当前canvas
+	setSkin(skin) {
+		GlobalData.models[this.randomId].setSkin(skin);
+	}
+
+	//获取模型中所有的插槽
+	getSlots() {
+		return GlobalData.models[this.randomId].skeleton.slots;
+	}
 }
 
 export default ModelController;
