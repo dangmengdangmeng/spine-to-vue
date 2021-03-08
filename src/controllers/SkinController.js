@@ -1,6 +1,3 @@
-import ModelService from "../services/model/ModelService";
-import GlobalData from "spine-to-vue/src/Global";
-
 class SkinController {
 	constructor() {
 		this.gl = null;
@@ -9,15 +6,26 @@ class SkinController {
 		this.bounds = null;
 		this.timeKeeper = null;
 		this.DEMO_NAME = null;
-		this.curSkin = "";
-		this.skins = [];
-		this.curAction = "";
-		this.animations = [];
+		this.curSkin = ""; //当前皮肤名称
+		this.skins = []; //皮肤列表
+		this.curAction = ""; //当前动作名称
+		this.animations = []; //动作列表
 		this.skeleton = null;
-		this.files = [];
+		this.files = []; //当前文件列表
 		this.state = null;
-		this.swordStatus = false;
 		this.loadCallback = null;
+		this.defaultRenderInfo = {
+			width: null,
+			height: null,
+			x: 0,
+			y: 0
+		};
+		this.currentRenderInfo = {
+			width: null,
+			height: null,
+			x: 0,
+			y: 0
+		};
 	}
 
 	load(canvas, assetManager) {
@@ -47,6 +55,7 @@ class SkinController {
 			assetManager.get(this.DEMO_NAME, this.files["json"])
 		);
 		this.skeleton = new spine.Skeleton(skeletonData);
+		this.setDefaultRenderInfo();
 		this.setSkinAndAnimaiton();
 		this.changeSkin(this.curSkin);
 		const stateData = new spine.AnimationStateData(this.skeleton.data);
@@ -74,14 +83,30 @@ class SkinController {
 		return this.files.images.find((item) => item.name === name).url;
 	}
 
+	setDefaultRenderInfo() {
+		this.defaultRenderInfo = {
+			width: this.skeleton.data.width * 2,
+			height: this.skeleton.data.height * 2,
+			x: 0,
+			y: this.skeleton.data.height / 2
+		};
+		this.currentRenderInfo = JSON.parse(JSON.stringify(this.defaultRenderInfo));
+	}
+
+	setCurrentRenderInfo(info) {
+		if (!info) {
+			return false;
+		}
+		this.currentRenderInfo = info;
+	}
+
 	render() {
 		this.timeKeeper.update();
 		const {delta} = this.timeKeeper;
-
-		this.renderer.camera.position.x = this.offset.x + this.bounds.x / 2;
-		this.renderer.camera.position.y = this.offset.y + this.bounds.y / 4;
-		this.renderer.camera.viewportWidth = this.bounds.x * 2;
-		this.renderer.camera.viewportHeight = this.bounds.y * 2;
+		this.renderer.camera.position.x = this.currentRenderInfo.x || this.defaultRenderInfo.x;
+		this.renderer.camera.position.y = this.currentRenderInfo.y || this.defaultRenderInfo.y;
+		this.renderer.camera.viewportWidth = this.currentRenderInfo.width || this.defaultRenderInfo.width;
+		this.renderer.camera.viewportHeight = this.currentRenderInfo.height || this.defaultRenderInfo.height;
 		this.renderer.resize(spine.webgl.ResizeMode.Fit);
 
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -116,20 +141,6 @@ class SkinController {
 		this.skeleton.setSkin(skin);
 		this.skeleton.setSlotsToSetupPose();
 		// slot.setAttachment(weapon);
-	}
-
-	swingSword(status) {
-		if (status) {
-			this.swordStatus = !this.swordStatus;
-			this.state.setAnimation(
-				5,
-				this.swordStatus ? "meleeSwing2" : "meleeSwing1",
-				false,
-				0
-			);
-		} else {
-			this.state.setAnimation(5, "empty", false, 0);
-		}
 	}
 }
 

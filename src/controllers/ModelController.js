@@ -1,5 +1,4 @@
 import ModelBaseController from "./ModelBaseController";
-import ModelService from "../services/model/ModelService";
 import GlobalData from "../Global";
 import SkinController from "./SkinController";
 import * as uuid from "uuid/v4";
@@ -29,32 +28,6 @@ class ModelController {
 			return item.name;
 		});
 		return items;
-	}
-
-	fileToAnimation(json) {
-		return new Promise((resolve) => {
-			ModelService.getJsonInfo(json).then((response) => {
-				const {animations} = response;
-				let items = [];
-				for (let key in animations) {
-					items.push(key);
-				}
-				resolve(items);
-			});
-		});
-	}
-
-	fileToSkin(json) {
-		return new Promise((resolve) => {
-			ModelService.getJsonInfo(json).then((response) => {
-				const {skins} = response;
-				let items = [];
-				skins.map((item) => {
-					items.push(item.name);
-				});
-				resolve(items);
-			});
-		});
 	}
 
 	getAnimations() {
@@ -96,6 +69,14 @@ class ModelController {
 	//获取模型中所有的插槽
 	getSlots() {
 		return GlobalData.models[this.randomId].skeleton.slots;
+	}
+
+	getDefaultRenderInfo() {
+		return JSON.parse(JSON.stringify(GlobalData.models[this.randomId].defaultRenderInfo));
+	}
+
+	setCurrentRenderInfo(info) {
+		GlobalData.models[this.randomId].setCurrentRenderInfo(info);
 	}
 }
 
