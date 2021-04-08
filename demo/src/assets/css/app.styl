@@ -1,0 +1,57 @@
+color_primary = #8D7EFF
+color_orange = #FF9A57
+font_family = "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif
+
+default_radius = 8px
+designSize = 375
+fontSize = (designSize / 10)
+minWidth = 320px
+maxWidth = 1366px
+
+
+rem(pxSize)
+  return pxSize / fontSize * 1rem
+
+html
+  font-size ((fontSize / (designSize)) * 100vw)
+  @media screen and (max-width: minWidth) {
+    font-size: 32px
+  }
+  @media screen and (min-width: maxWidth) {
+    font-size: 136px
+  }
+
+  body {
+    position relative
+    touch-action: manipulation;
+  }
+
+#app
+  margin auto
+  width 100%
+  font-family font_family
+  max-width maxWidth
+  min-width minWidth
+  @media screen and (orientation: portrait) {
+    max-width maxWidth
+    min-width minWidth
+    margin auto
+  }
+
+
+*
+  word-break break-all
+  outline none
+
+// 竖行截取
+.line-clamp-2
+  overflow hidden
+  text-overflow ellipsis
+  display -webkit-box
+  -webkit-line-clamp 2
+  -webkit-box-orient vertical
+
+.row-overflow
+  overflow hidden
+  text-overflow ellipsis
+  white-space nowrap

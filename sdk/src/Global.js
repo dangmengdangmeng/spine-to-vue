@@ -1,4 +1,5 @@
 const GlobalData = {
-    models: {}
+    models: {},
+    baseModels:{}
 }
 export default GlobalData
