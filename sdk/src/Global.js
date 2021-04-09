@@ -1,5 +1,6 @@
 const GlobalData = {
-    models: {},
-    baseModels:{}
-}
-export default GlobalData
+	models: {},
+	baseModels: {},
+	isLoadScript: false
+};
+export default GlobalData;

@@ -9,6 +9,8 @@ class ModelController {
 		this.config = {};
 		this.isInit = false;
 		this.randomId = uuid() + "_" + new Date().valueOf();
+		this.timer = null;
+		this.speed = 0.1;
 	}
 
 	//todo 初始化
@@ -17,15 +19,38 @@ class ModelController {
 			this.config = config;
 			if (this.isInit) return false;
 			this.isInit = true;
-			GlobalData.models[this.randomId] = new SkinController();
-			GlobalData.models[this.randomId]._name = this.randomId;
-			GlobalData.models[this.randomId].files = this.config.files;
+			this.listenLoadScript().then(() => {
+				GlobalData.models[this.randomId] = new SkinController();
+				GlobalData.models[this.randomId]._name = this.randomId;
+				GlobalData.models[this.randomId].files = this.config.files;
 
-			GlobalData.baseModels[this.randomId] = new BaseModelController();
-			GlobalData.baseModels[this.randomId].modelId = this.randomId;
-			GlobalData.baseModels[this.randomId].init().then(() => {
-				resolve();
+				GlobalData.baseModels[this.randomId] = new BaseModelController();
+				GlobalData.baseModels[this.randomId].modelId = this.randomId;
+				GlobalData.baseModels[this.randomId].init().then(() => {
+					resolve();
+				});
 			});
+		});
+	}
+
+	//todo 查看插件库是否加载完成
+	listenLoadScript() {
+		return new Promise(resolve => {
+			if (!GlobalData.isLoadScript) {
+				if (!this.timer) {
+					this.timer = setInterval(() => {
+						if (GlobalData.isLoadScript) {
+							clearInterval(this.timer);
+							this.timer = null;
+							console.log('listenLoadScript_');
+							resolve();
+						}
+					}, this.speed * 1000);
+				}
+			} else {
+				console.log('listenLoadScript');
+				resolve();
+			}
 		});
 	}
 
@@ -35,8 +60,8 @@ class ModelController {
 			if (!this.isInit) {
 				reject('请先初始化');
 			}
-			GlobalData.baseModels[this.randomId].loadModel(canvas);
 			GlobalData.models[this.randomId].loadCallback = () => resolve();
+			GlobalData.baseModels[this.randomId].loadModel(canvas);
 		});
 	}
 

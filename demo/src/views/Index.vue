@@ -6,36 +6,28 @@
 </template>
 
 <script>
-// import CustomSpine from "../../../sdk/src/main";
-import CustomSpine from "spine-to-vue";
+import CustomSpine from "../../../sdk/src/main";
+// import CustomSpine from "spine-to-vue";
 
 export default {
 	name: "Download",
 	data() {
 		return {
 			files: {
-				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/4a39f0ba-aac8-4802-9d5c-fcfc23a188d5_jirounan.atlas",
-				json: "https://sandbox-iyuyi-public.yaolantu.com/files/5624d7e4-0e3e-4f1d-aaf8-e0b106ea7117_jirounan.json",
+				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/22456fbc-475b-4469-b503-6e9fb9be4b31_skeleton.atlas",
+				json: "https://sandbox-iyuyi-public.yaolantu.com/files/5df2c056-2d8c-46eb-9c16-d89a48655226_skeleton.json",
 				images: [
 					{
-						name: "jirounan.png",
-						url: "https://sandbox-iyuyi-public.yaolantu.com/files/ff1e55d8-0768-4d8a-81f7-78e8bd6dfae8_jirounan.png"
-					}
-				]
-			},
-			files1: {
-				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/30b197da-5fd2-4eef-837f-798232e19350_boy.atlas",
-				json: "https://sandbox-iyuyi-public.yaolantu.com/files/44603ea8-e39a-4db3-86e7-3686c7317bc5_boy.json",
-				images: [
-					{
-						name: "boy.png",
-						url: "https://sandbox-iyuyi-public.yaolantu.com/files/77518766-c25e-4a95-9a95-0b9b95f50a7c_boy.png"
+						name: "skeleton.png",
+						url: "https://sandbox-iyuyi-public.yaolantu.com/files/f8d8af8b-ef65-4f97-8a07-4f60c86ac6b0_skeleton.png"
 					}
 				]
 			},
 			modelController: null,
-			status: 0
 		};
+	},
+	mounted() {
+		this.createModel();
 	},
 	methods: {
 		createModel() {
@@ -46,9 +38,8 @@ export default {
 				modelEle.className = 'model-ele';
 				modelEle.id = 'modelEle';
 				this.$refs['parentEle'].appendChild(modelEle);
-				modelController.init({files: this.status % 2 == 0 ? this.files : this.files1}).then(() => {
-					this.status++;
-					modelController.changeSkin(modelController.getSkins()[2]);
+				modelController.init({files: this.files}).then(() => {
+					modelController.changeSkin(modelController.getSkins()[1]);
 					modelController.load(modelEle);
 				});
 			});
