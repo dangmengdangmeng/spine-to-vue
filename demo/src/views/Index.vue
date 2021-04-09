@@ -2,42 +2,40 @@
 	<div class="download" ref="parentEle">
 		<div @click="createModel">创建</div>
 		<div @click="removeModel">销毁</div>
-		download
 	</div>
 </template>
 
 <script>
-import CustomSpine from "../../../sdk/src/main";
+// import CustomSpine from "../../../sdk/src/main";
+import CustomSpine from "spine-to-vue";
 
 export default {
 	name: "Download",
 	data() {
 		return {
 			files: {
-				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/d8beb29b-cf40-4555-8d74-d47634180484_boys.atlas",
-				json: "https://sandbox-iyuyi-public.yaolantu.com/files/da0b3c62-4c46-4dcc-86b2-53f5453c789d_boys.json",
+				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/4a39f0ba-aac8-4802-9d5c-fcfc23a188d5_jirounan.atlas",
+				json: "https://sandbox-iyuyi-public.yaolantu.com/files/5624d7e4-0e3e-4f1d-aaf8-e0b106ea7117_jirounan.json",
 				images: [
 					{
-						name: "boys.png",
-						url: "https://sandbox-iyuyi-public.yaolantu.com/files/7deb9665-f25a-4f1a-84bc-55c13e8938f0_boys.png"
+						name: "jirounan.png",
+						url: "https://sandbox-iyuyi-public.yaolantu.com/files/ff1e55d8-0768-4d8a-81f7-78e8bd6dfae8_jirounan.png"
 					}
 				]
 			},
 			files1: {
-				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/b7d5f869-1ea7-411d-9fbb-95416764c7a5_boy.atlas",
-				json: "https://sandbox-iyuyi-public.yaolantu.com/files/85f0ad50-14a6-41bd-9820-086a1560aa1a_boy.json",
+				atlas: "https://sandbox-iyuyi-public.yaolantu.com/files/30b197da-5fd2-4eef-837f-798232e19350_boy.atlas",
+				json: "https://sandbox-iyuyi-public.yaolantu.com/files/44603ea8-e39a-4db3-86e7-3686c7317bc5_boy.json",
 				images: [
 					{
 						name: "boy.png",
-						url: "https://sandbox-iyuyi-public.yaolantu.com/files/7d3a13c8-b260-4641-adb6-c79ee8b552f8_boy.png"
+						url: "https://sandbox-iyuyi-public.yaolantu.com/files/77518766-c25e-4a95-9a95-0b9b95f50a7c_boy.png"
 					}
 				]
 			},
 			modelController: null,
 			status: 0
 		};
-	},
-	mounted() {
 	},
 	methods: {
 		createModel() {
@@ -51,18 +49,18 @@ export default {
 				modelController.init({files: this.status % 2 == 0 ? this.files : this.files1}).then(() => {
 					this.status++;
 					modelController.changeSkin(modelController.getSkins()[2]);
-					console.error(modelController.getSkins());
-					console.error(modelController.getAnimations());
-					modelController.load(modelEle).then(() => {
-						// modelController.changeAnimation(modelController.getAnimations()[1]);
-					});
+					modelController.load(modelEle);
 				});
 			});
 		},
 		removeModel() {
 			this.$nextTick().then(() => {
-				this.$refs['parentEle'].removeChild(document.getElementById('modelEle'));
-				this.modelController = null;
+				const parent = this.$refs['parentEle'];
+				const modelEle = document.getElementById('modelEle');
+				if (parent && modelEle) {
+					parent.removeChild(modelEle);
+					this.modelController = null;
+				}
 			});
 		}
 	}
@@ -77,9 +75,14 @@ export default {
 	align-items center
 	justify-content space-around
 	flex-wrap wrap
+	position relative
 
 	/deep/ .model-ele
-		width 400px
-		height 400px
-
+		width 100vw
+		height 100vh
+		position absolute
+		left 50%
+		top 50%
+		transform translate(-50%, -50%)
+		z-index -1
 </style>

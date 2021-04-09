@@ -1,7 +1,7 @@
 import * as uuid from "uuid/v4";
 import GlobalData from "../Global";
 
-class ModelBaseController {
+class BaseModelController {
 	constructor() {
 		this.spineDemos = {
 			assetManager: new spine.SharedAssetManager(""),
@@ -16,15 +16,15 @@ class ModelBaseController {
 	}
 
 	loadModel(element) {
-		const canvas = this.createCanvases();
-		GlobalData.models[this.modelId].load(canvas);
 		GlobalData.models[this.modelId].placeholder = element;
+		const canvas = this.createCanvas();
+		GlobalData.models[this.modelId].load(canvas);
 		GlobalData.models[this.modelId].canvas = canvas;
 		GlobalData.models[this.modelId].visible = false;
 		this.loop();
 	}
 
-	renderDemo() {
+	renderModel() {
 		const {canvas = {}, visible, placeholder, _name} = GlobalData.models[
 			this.modelId
 			];
@@ -61,10 +61,10 @@ class ModelBaseController {
 		GlobalData.models[this.modelId].visible = vertInView && horInView;
 	}
 
-	createCanvases() {
+	createCanvas() {
 		const canvas = document.createElement("canvas");
-		canvas.style.width = "100%";
-		canvas.style.height = "100%";
+		canvas.style.width = '100%';
+		canvas.style.height = '100%';
 		canvas.ctx = new spine.webgl.ManagedWebGLRenderingContext(canvas, {
 			alpha: true,
 		});
@@ -74,7 +74,7 @@ class ModelBaseController {
 
 	loop() {
 		this.checkElementVisible();
-		this.renderDemo();
+		this.renderModel();
 		if (!this.loopTimer) {
 			this.loopTimer = setInterval(() => {
 				this.loop();
@@ -83,4 +83,4 @@ class ModelBaseController {
 	}
 }
 
-export default ModelBaseController;
+export default BaseModelController;

@@ -61,17 +61,17 @@ class SkinController {
 			assetManager.get(this._name, this.files["json"])
 		);
 		this.skeleton = new spine.Skeleton(skeletonData);
-		this.setDefaultRenderInfo();
-		this.setSkinAndAnimation();
-		this.changeSkin(this.curSkin);
 		const stateData = new spine.AnimationStateData(this.skeleton.data);
 		this.state = new spine.AnimationState(stateData);
-		this.changeAnimation(this.curAnimation, true);
 		this.state.apply(this.skeleton);
 		this.skeleton.updateWorldTransform();
 		this.offset = new spine.Vector2();
 		this.bounds = new spine.Vector2();
 		this.skeleton.getBounds(this.offset, this.bounds, []);
+		this.setDefaultRenderInfo();
+		this.setSkinAndAnimation();
+		this.changeSkin(this.curSkin);
+		this.changeAnimation(this.curAnimation, true);
 		if (this.loadCallback) {
 			this.loadCallback();
 		}
@@ -90,11 +90,13 @@ class SkinController {
 	}
 
 	setDefaultRenderInfo() {
+		//todo 不同角色的初始y不同 需要先把所有角色的y轴归0 然后去计算角色的中心位置
+		const _offsetY = 0 - this.skeleton.data.y;
 		this.defaultRenderInfo = {
 			width: this.skeleton.data.width * 2,
 			height: this.skeleton.data.height * 2,
 			x: 0,
-			y: this.skeleton.data.height / 2
+			y: -_offsetY + this.skeleton.data.height / 2
 		};
 		this.currentRenderInfo = Helper.deepCopy(this.defaultRenderInfo);
 	}
@@ -109,10 +111,10 @@ class SkinController {
 	render() {
 		this.timeKeeper.update();
 		const {delta} = this.timeKeeper;
-		this.renderer.camera.position.x = this.currentRenderInfo.x || this.defaultRenderInfo.x;
-		this.renderer.camera.position.y = this.currentRenderInfo.y || this.defaultRenderInfo.y;
-		this.renderer.camera.viewportWidth = this.currentRenderInfo.width || this.defaultRenderInfo.width;
-		this.renderer.camera.viewportHeight = this.currentRenderInfo.height || this.defaultRenderInfo.height;
+		this.renderer.camera.position.x = this.currentRenderInfo.x;
+		this.renderer.camera.position.y = this.currentRenderInfo.y;
+		this.renderer.camera.viewportWidth = this.currentRenderInfo.width;
+		this.renderer.camera.viewportHeight = this.currentRenderInfo.height;
 		this.renderer.resize(spine.webgl.ResizeMode.Fit);
 
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);

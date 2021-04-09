@@ -1,4 +1,4 @@
-import ModelBaseController from "./ModelBaseController";
+import BaseModelController from "./BaseModelController";
 import GlobalData from "../Global";
 import SkinController from "./SkinController";
 import uuid from "uuid/v4";
@@ -21,7 +21,7 @@ class ModelController {
 			GlobalData.models[this.randomId]._name = this.randomId;
 			GlobalData.models[this.randomId].files = this.config.files;
 
-			GlobalData.baseModels[this.randomId] = new ModelBaseController();
+			GlobalData.baseModels[this.randomId] = new BaseModelController();
 			GlobalData.baseModels[this.randomId].modelId = this.randomId;
 			GlobalData.baseModels[this.randomId].init().then(() => {
 				resolve();
@@ -31,7 +31,10 @@ class ModelController {
 
 	//todo 加载模型
 	load(canvas) {
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
+			if (!this.isInit) {
+				reject('请先初始化');
+			}
 			GlobalData.baseModels[this.randomId].loadModel(canvas);
 			GlobalData.models[this.randomId].loadCallback = () => resolve();
 		});

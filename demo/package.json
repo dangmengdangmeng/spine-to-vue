@@ -1,5 +1,5 @@
 {
-  "name": "spine-to-vue",
+  "name": "spine-to-vue-demo",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,6 +8,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "resetcss": "^1.0.3",
+    "spine-to-vue": "0.0.42",
     "uuid": "^3.3.3",
     "vue": "^2.6.10",
     "vue-router": "^3.1.3",
