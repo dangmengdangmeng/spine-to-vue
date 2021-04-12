@@ -42,13 +42,11 @@ class ModelController {
 						if (GlobalData.isLoadScript) {
 							clearInterval(this.timer);
 							this.timer = null;
-							console.log('listenLoadScript_');
 							resolve();
 						}
 					}, this.speed * 1000);
 				}
 			} else {
-				console.log('listenLoadScript');
 				resolve();
 			}
 		});
